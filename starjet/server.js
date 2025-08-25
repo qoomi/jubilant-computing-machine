@@ -17,12 +17,20 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 // Rate limiting for production
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: NODE_ENV === 'production' ? 100 : 1000, // Limit each IP to 100 requests per windowMs in production
+    max: NODE_ENV === 'production' ? 1000 : 5000, // Much higher limits for normal usage
     message: {
         error: 'Too many requests from this IP, please try again later.'
     },
     standardHeaders: true,
     legacyHeaders: false,
+    skip: (req) => {
+        // Skip rate limiting for health checks and static files
+        return req.path === '/api/health' ||
+            req.path === '/api/connection-test' ||
+            req.path.startsWith('/css/') ||
+            req.path.startsWith('/js/') ||
+            req.path.startsWith('/images/');
+    }
 });
 
 // Apply rate limiting to all routes
@@ -31,7 +39,7 @@ app.use(limiter);
 // Enhanced rate limiting for login endpoint
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // 5 attempts per window
+    max: 20, // 20 attempts per window (much more reasonable)
     message: {
         error: 'Too many login attempts. Please try again later.'
     },
