@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice - STAR JET</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff;
+            color: #212121;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .invoice-main-content {
+            flex: 1 0 auto;
+        }
+
+        .invoice-bar-top,
+        .invoice-bar-bottom {
+            width: 100vw;
+            height: 32px;
+            background: #b0006d;
+            margin: 0;
+            padding: 0;
+        }
+
+        .invoice-bar-bottom {
+            align-self: flex-end;
+            position: relative;
+        }
+
+        @media print {
+
+            html,
+            body {
+                height: 100%;
+                min-height: 100%;
+            }
+
+            body {
+                position: relative;
+                min-height: 100vh;
+            }
+
+            .invoice-bar-bottom {
+                position: absolute !important;
+                left: 0;
+                bottom: 0;
+                width: 100vw;
+                margin: 0 !important;
+            }
+
+            .invoice-main-content {
+                margin-bottom: 32px !important;
+            }
+        }
+
+        .invoice-header-bar {
+            background: none;
+            color: #212121;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .invoice-logo {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto 0 auto;
+            display: block;
+        }
+
+        .invoice-tagline {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 6px;
+            color: #212121;
+        }
+
+        .invoice-title {
+            color: #b0006d;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 18px 0 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .company-customer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 20px 0 10px 0;
+        }
+
+        .company-info {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-left: 10px;
+        }
+
+        .company-info .label {
+            color: #b0006d;
+            font-weight: 600;
+        }
+
+        .customer-label {
+            background: #b0006d;
+            color: #fff;
+            padding: 3px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: inline-block;
+            font-size: 1rem;
+        }
+
+        .customer-details {
+            margin-left: 0;
+            margin-top: 6px;
+        }
+
+        .invoice-meta {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .invoice-label {
+            color: #b0006d;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+
+        .main-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+        }
+
+        .main-table th,
+        .main-table td {
+            border: 1px solid #b0006d;
+            padding: 4px 6px;
+            font-size: 0.97rem;
+            text-align: left;
+        }
+
+        .main-table th {
+            background: #fff;
+            color: #b0006d;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .main-table td {
+            vertical-align: top;
+        }
+
+        .desc-cell {
+            white-space: pre-line;
+        }
+
+        .total-row td {
+            border: none;
+        }
+
+        .total-label {
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-left: 0;
+        }
+
+        .total-box {
+            color: #b0006d;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-align: right;
+        }
+
+        .print-btn {
+            background: #b0006d;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        @media print {
+            .print-btn {
+                display: none !important;
+            }
+
+            .invoice-bar-bottom {
+                display: block !important;
+                position: static !important;
+            }
+        }
+
+        @media print {
+            .done-btn-container {
+                display: none !important;
+            }
+        }
+
+        .done-btn:hover {
+            background: #7a004a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-bar-top"></div>
+    <div class="invoice-main-content">
+        <div class="invoice-header-bar">
+            <img src="star jet.png" alt="Logo" class="invoice-logo">
+        </div>
+        <div class="invoice-title">INVOICE</div>
+        <div class="company-customer-row" style="margin-bottom: 0; margin-top: 20px;">
+            <div
+                style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; width: 100%;">
+                <div>
+                    <div class="customer-label">Customer:</div>
+                    <div class="customer-details" id="customerDetails">
+                        <!-- JS will fill this -->
+                    </div>
+                </div>
+                <div
+                    style="text-align: right; min-width: 180px; display: flex; flex-direction: column; align-items: flex-end; gap: 0;">
+                    <div id="invoiceDate" style="font-size: 1.1rem; color: #b0006d; font-weight: bold;"></div>
+                    <div id="invoiceDay" style="font-size: 1.1rem; color: #b0006d; font-weight: bold;"></div>
+                    <div id="invoiceTime" style="font-size: 1.1rem; color: #b0006d; font-weight: bold;"></div>
+                </div>
+            </div>
+        </div>
+        <button class="print-btn" onclick="window.print()">Print Invoice</button>
+        <table class="main-table" style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th>Item#</th>
+                    <th>Width</th>
+                    <th>Length</th>
+                    <th>Space</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="invoiceItems">
+                <!-- JS will fill this -->
+            </tbody>
+        </table>
+        <div style="width:100%; display:flex; flex-direction:column; align-items:flex-end; margin-top:10px; gap:8px; margin-bottom:32px;"
+            id="totalsBox">
+            <!-- JS will fill this -->
+        </div>
+    </div>
+    <div class="invoice-bar-bottom"></div>
+    <div class="done-btn-container" style="width:100%; display:flex; justify-content:center; margin: 32px 0 0 0;">
+        <a class='done-btn' href='sales-track.html'
+            style='background:#b0006d; color:#fff; padding:12px 36px; border-radius:6px; font-size:1.1rem; font-weight:600; text-decoration:none; box-shadow:0 2px 6px rgba(0,0,0,0.08); transition:background 0.2s;'>Done</a>
+    </div>
+    <!-- API Client for server communication -->
+    <script src="api-client.js"></script>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // Hardcoded company info (can be made dynamic if needed)
+        const company = {
+            name: 'STAR JET',
+            city: 'HARGEISA',
+            address: 'SUUQA WAAHEEN',
+            phone: '520856',
+            logo: 'star jet.png'
+        };
+        function getTargetId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id') || localStorage.getItem('starjet_last_invoice_id') || null;
+        }
+
+        function getLocalSale(id) {
+            try {
+                const raw = localStorage.getItem('starjet_sales');
+                const arr = raw ? JSON.parse(raw) : [];
+                if (!Array.isArray(arr) || arr.length === 0) return null;
+                if (id) return arr.find(s => s && s.id === id) || null;
+                // latest by date
+                return arr
+                    .filter(Boolean)
+                    .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))[0] || null;
+            } catch {
+                return null;
+            }
+        }
+
+        async function fetchSaleByIdOrLatest(id) {
+            try {
+                if (!window.apiClient) {
+                    alert('API client not configured. Please check your configuration.');
+                    return null;
+                }
+
+                if (id) {
+                    const result = await window.apiClient.getSale(id);
+                    if (result.error) {
+                        throw new Error(result.error);
+                    }
+                    return result.sale || null;
+                }
+
+                // For now, we'll get all sales and find the latest completed one
+                // This could be optimized with a specific endpoint later
+                const result = await window.apiClient.getSales();
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
+                const completedSales = (result.sales || []).filter(sale => sale.status === 'Completed');
+                if (completedSales.length === 0) {
+                    return null;
+                }
+
+                // Return the latest completed sale
+                return completedSales.sort((a, b) => new Date(b.date) - new Date(a.date))[0] || null;
+            } catch (e) {
+                console.error('Failed to fetch invoice from API:', e);
+                alert('Failed to load invoice from the database.');
+                return null;
+            }
+        }
+        (async function init() {
+            const id = getTargetId();
+            const sale = await fetchSaleByIdOrLatest(id);
+            if (!sale) {
+                document.getElementById('customerDetails').innerHTML = '<div>No invoice found. Please return to Sales Tracking and try again.</div>';
+                document.getElementById('invoiceDate').textContent = '-';
+                document.getElementById('invoiceDay').textContent = '-';
+                document.getElementById('invoiceTime').textContent = '-';
+                document.getElementById('invoiceItems').innerHTML = '';
+                document.getElementById('totalsBox').innerHTML = '';
+                return;
+            }
+            else {
+                // Customer details
+                document.getElementById('customerDetails').innerHTML = `
+                <div><span class="label">Name:</span> ${sale.customerName || sale.customername || ''}</div>
+                <div><span class="label">Phone:</span> ${sale.customerPhone || sale.customerphone || ''}</div>
+            `;
+                // Date, Day, Time
+                const dateObj = sale.date ? new Date(sale.date) : new Date();
+                const dateStr = dateObj.toISOString().slice(0, 10);
+                const dayStr = dateObj.toLocaleDateString(undefined, { weekday: 'long' });
+                const timeStr = dateObj.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: true });
+                document.getElementById('invoiceDate').textContent = dateStr;
+                document.getElementById('invoiceDay').textContent = dayStr;
+                document.getElementById('invoiceTime').textContent = timeStr;
+                // Items (supporting multiple items)
+                let items = sale.items || [];
+                let itemsHtml = '';
+                let subtotal = 0;
+                items.forEach(item => {
+                    let width = item.width ? item.width : '';
+                    let length = item.length ? item.length : '';
+                    let space = item.space ? item.space : '';
+                    let quantity = item.quantity ? item.quantity : '';
+                    let unitPrice = item.unitPrice ? item.unitPrice : '';
+                    let itemTotal = item.itemTotal ? item.itemTotal : '';
+                    let rowTotal = parseFloat(itemTotal) || 0;
+                    subtotal += rowTotal;
+                    itemsHtml += `<tr>
+                    <td>${item.item ? item.item : ''}</td>
+                    <td>${width}</td>
+                    <td>${length}</td>
+                    <td>${space}</td>
+                    <td>${quantity}</td>
+                    <td>${unitPrice !== '' ? '$' + unitPrice : ''}</td>
+                    <td>${itemTotal !== '' ? '$' + itemTotal : ''}</td>
+                </tr>`;
+                });
+                document.getElementById('invoiceItems').innerHTML = itemsHtml;
+                // Totals
+                let discount = Number(sale.discount) || 0;
+                let total = subtotal;
+                if (discount > 0) {
+                    total = subtotal * (1 - discount / 100);
+                }
+                let totalsHtml = '';
+                totalsHtml += `<div style="display:flex; gap:18px; min-width:320px; max-width:350px; justify-content:flex-end;">
+                <span style="text-align:right; font-size:1.1rem; color:#212121; font-weight:600; flex:1;">Sup Totel:</span>
+                <span style="text-align:right; font-size:1.1rem; color:#b04a5a; font-weight:600; min-width:90px;">$ ${subtotal.toFixed(2)}</span>
+            </div>`;
+                totalsHtml += `<div style="display:flex; gap:18px; min-width:320px; max-width:350px; justify-content:flex-end;">
+                <span style="text-align:right; font-size:1.1rem; color:#212121; font-weight:600; flex:1;">Discount%:</span>
+                <span style="text-align:right; font-size:1.1rem; color:#b04a5a; font-weight:600; min-width:90px;">${discount}%</span>
+            </div>`;
+                totalsHtml += `<div style="display:flex; gap:18px; min-width:320px; max-width:350px; justify-content:flex-end;">
+                <span style="text-align:right; font-size:1.2rem; color:#212121; font-weight:700; flex:1;">Totel:</span>
+                <span style="text-align:right; font-size:1.2rem; color:#212121; font-weight:700; min-width:90px;">$ ${total.toFixed(2)}</span>
+            </div>`;
+                document.getElementById('totalsBox').innerHTML = totalsHtml;
+            }
+        })();
+    </script>
+   
+</body>
+
+</html>
