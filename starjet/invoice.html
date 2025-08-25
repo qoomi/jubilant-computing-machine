@@ -6,6 +6,10 @@
     <title>Invoice - STAR JET</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Configuration and API Client for server communication -->
+    <script src="config.js"></script>
+    <script src="api-client.js"></script>
+    <script src="auth.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -274,10 +278,7 @@
         <a class='done-btn' href='sales-track.html'
             style='background:#b0006d; color:#fff; padding:12px 36px; border-radius:6px; font-size:1.1rem; font-weight:600; text-decoration:none; box-shadow:0 2px 6px rgba(0,0,0,0.08); transition:background 0.2s;'>Done</a>
     </div>
-    <!-- API Client for server communication -->
-    <script src="api-client.js"></script>
-    <script src="config.js"></script>
-    <script src="auth.js"></script>
+
     <script>
         // Hardcoded company info (can be made dynamic if needed)
         const company = {
@@ -310,41 +311,48 @@
         async function fetchSaleByIdOrLatest(id) {
             try {
                 if (!window.apiClient) {
-                    alert('API client not configured. Please check your configuration.');
+                    console.error('API client is not configured');
                     return null;
                 }
 
                 if (id) {
                     const result = await window.apiClient.getSale(id);
                     if (result.error) {
-                        throw new Error(result.error);
+                        console.error('Error fetching sale by ID:', result.error);
+                        return null;
                     }
                     return result.sale || null;
                 }
 
-                // For now, we'll get all sales and find the latest completed one
-                // This could be optimized with a specific endpoint later
+                // If no ID, get the latest sale
                 const result = await window.apiClient.getSales();
                 if (result.error) {
-                    throw new Error(result.error);
-                }
-
-                const completedSales = (result.sales || []).filter(sale => sale.status === 'Completed');
-                if (completedSales.length === 0) {
+                    console.error('Error fetching latest sale:', result.error);
                     return null;
                 }
 
-                // Return the latest completed sale
-                return completedSales.sort((a, b) => new Date(b.date) - new Date(a.date))[0] || null;
+                const sales = result.sales || [];
+                if (sales.length === 0) {
+                    return null;
+                }
+
+                // Return the latest sale
+                return sales.sort((a, b) => new Date(b.date) - new Date(a.date))[0] || null;
             } catch (e) {
                 console.error('Failed to fetch invoice from API:', e);
-                alert('Failed to load invoice from the database.');
                 return null;
             }
         }
         (async function init() {
             const id = getTargetId();
-            const sale = await fetchSaleByIdOrLatest(id);
+            let sale = await fetchSaleByIdOrLatest(id);
+
+            // Fallback to localStorage if API fails
+            if (!sale && id) {
+                console.log('Falling back to localStorage...');
+                sale = getLocalSale(id);
+            }
+
             if (!sale) {
                 document.getElementById('customerDetails').innerHTML = '<div>No invoice found. Please return to Sales Tracking and try again.</div>';
                 document.getElementById('invoiceDate').textContent = '-';
@@ -415,7 +423,7 @@
             }
         })();
     </script>
-   
+
 </body>
 
 </html>
