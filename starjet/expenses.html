@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co;">
+    <title>Expenses - Star Jet</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- API Client for server communication -->
+    <script src="config.js"></script>
+    <script src="api-client.js"></script>
+    <script src="auth.js"></script>
+    <script src="user-profile.js"></script>
+    <script src="access-control.js"></script>
+    <style>
+        .expenses-container {
+            max-width: 900px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 32px 24px 24px 24px;
+            border: 4px solid #b3006b;
+        }
+
+        .expenses-title {
+            color: #b3006b;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 8px 0 24px 0;
+            text-align: center;
+        }
+
+        .expense-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0;
+        }
+
+        .form-row.full-width {
+            grid-column: 1 / -1;
+        }
+
+
+
+        @media (max-width: 700px) {
+            .expenses-container {
+                padding: 8px 2px;
+            }
+
+            .expense-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="side-nav">
+        <ul class="nav-menu">
+            <!-- Navigation will be dynamically rendered based on user role -->
+        </ul>
+    </nav>
+    <div class="container main-content">
+        <div class="expenses-container">
+            <div class="expenses-title">Expenses</div>
+
+            <form id="expenseForm">
+
+                <div class="expense-form">
+                    <div class="form-row full-width">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" name="description" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="amount">Amount</label>
+                        <input type="number" id="amount" name="amount" step="0.01" min="0" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" required readonly
+                            style="background-color: #f8f9fa; color: #6c757d; cursor: not-allowed;">
+                        <small style="color: #6c757d; font-size: 0.8rem; margin-top: 4px;">Date is automatically set to
+                            today</small>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="category">Category</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="work">Work-related (e.g., ink, materials)</option>
+                            <option value="non-work">Non-work-related (e.g., electricity, water bills)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit">Add Entry</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="toast-notifications.js"></script>
+    <script src="expenses.js"></script>
+    <script>
+        // Initialize dynamic navigation rendering
+        document.addEventListener('DOMContentLoaded', function () {
+            // Listen for access control ready event
+            document.addEventListener('accessControlReady', function (event) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement && event.detail.accessControl) {
+                    event.detail.accessControl.renderNavigation(navElement);
+                }
+            });
+
+            // Fallback: if access control is already ready, render immediately
+            if (window.accessControl && window.accessControl.getCurrentRole()) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement) {
+                    window.accessControl.renderNavigation(navElement);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

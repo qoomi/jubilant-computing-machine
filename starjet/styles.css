@@ -1,0 +1,1091 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background: #f8f8f8;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    /* This general container max-width might be overridden by .main-content below */
+    margin: 40px auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    color: #b3006b;
+    text-align: center;
+}
+
+/* Form Styles */
+form#salesForm {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px 24px;
+    margin-bottom: 24px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+}
+
+label {
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+input,
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button[type="submit"] {
+    grid-column: 1 / -1;
+    width: 180px;
+    margin: 24px auto 0 auto;
+    background: #b3006b;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button[type="submit"]:hover {
+    background: #8a0052;
+}
+
+/* Popup Styles */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background: #fff;
+    padding: 32px 24px;
+    border-radius: 8px;
+    min-width: 320px;
+    max-width: 90vw;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.invoice-logo {
+    max-width: 180px;
+    margin-bottom: 16px;
+}
+
+button {
+    margin-top: 16px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    background: #b3006b;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #8a0052;
+}
+
+/* Side Navigation Styles - Enhanced Professional Design */
+.side-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100vh;
+    background: linear-gradient(180deg, #b3006b 0%, #8a0052 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 100;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.side-nav .nav-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0 16px 0;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-height: 60px;
+    backdrop-filter: blur(10px);
+}
+
+.side-nav .nav-logo img {
+    max-width: 140px;
+    width: 85%;
+    height: auto;
+    display: block;
+    padding: 6px 0;
+    filter: brightness(1.1);
+}
+
+.side-nav ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.side-nav ul li {
+    width: 100%;
+}
+
+.side-nav ul li a {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    margin: 2px 8px;
+}
+
+.side-nav ul li a i,
+.side-nav ul li a .nav-icon {
+    margin-right: 10px;
+    width: 16px;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.side-nav ul li a.active,
+.side-nav ul li a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.side-nav ul li a.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-left: 3px solid #fff;
+    margin-left: 4px;
+}
+
+/* Enhanced navigation menu styles - Compact and Professional */
+.nav-menu {
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 8px;
+}
+
+.nav-section {
+    width: 100%;
+}
+
+.nav-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    margin: 8px 4px 4px 4px;
+    backdrop-filter: blur(5px);
+}
+
+.nav-section-header:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Removed nav-toggle styles - no collapse functionality */
+
+.nav-submenu {
+    list-style: none;
+    padding: 4px 0;
+    margin: 0;
+    background: transparent;
+}
+
+.nav-submenu li a {
+    padding: 8px 16px 8px 28px;
+    font-size: 0.9rem;
+    border-left: 2px solid transparent;
+    margin: 1px 4px;
+    border-radius: 6px;
+}
+
+.nav-submenu li a:hover,
+.nav-submenu li a.active {
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: #fff;
+    transform: translateX(2px);
+}
+
+/* Custom scrollbar for sidebar */
+.side-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.side-nav::-webkit-scrollbar-track {
+    background: #8a0052;
+    height: 100%;
+}
+
+.side-nav::-webkit-scrollbar-thumb {
+    background: #d147a3;
+    border-radius: 3px;
+    min-height: 100px;
+}
+
+.side-nav::-webkit-scrollbar-thumb:hover {
+    background: #e05bb8;
+}
+
+/* Main content shifts right of nav */
+/* This rule is overridden by a more specific rule below for .container.main-content */
+.main-content {
+    margin-left: 220px;
+}
+
+/* Responsive Nav: collapses to top bar on small screens */
+@media (max-width: 700px) {
+    .side-nav {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0 8px;
+    }
+
+    .nav-logo {
+        margin: 12px 0;
+    }
+
+    .side-nav ul {
+        display: flex;
+        flex-direction: row;
+        width: auto;
+    }
+
+    .side-nav ul li a {
+        padding: 12px 10px;
+        font-size: 1rem;
+    }
+
+    .main-content {
+        margin-left: 0;
+        margin-top: 70px;
+    }
+
+    /* Mobile responsive for enhanced nav */
+    .nav-section-header {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .nav-submenu li a {
+        padding: 6px 10px 6px 20px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 12px;
+    }
+
+    .popup-content {
+        padding: 16px 8px;
+    }
+}
+
+/* Invoice Popup Styles */
+.invoice-layout {
+    background: #fff;
+    border-radius: 8px;
+    padding: 32px 24px;
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+    font-size: 1rem;
+    color: #222;
+}
+
+.invoice-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid #b3006b;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.invoice-logo-block {
+    flex: 0 0 150px;
+}
+
+.invoice-title-block {
+    flex: 1;
+    text-align: left;
+    padding-left: 24px;
+}
+
+.invoice-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #b3006b;
+}
+
+.invoice-quotation {
+    font-size: 1.1rem;
+    color: #b3006b;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.invoice-info-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0 8px 0;
+}
+
+.invoice-company-info,
+.invoice-date-block {
+    font-size: 1rem;
+}
+
+.invoice-customer-info {
+    margin-bottom: 16px;
+    padding: 8px 0 8px 0;
+}
+
+.invoice-customer-info>div {
+    margin-bottom: 2px;
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 1rem;
+}
+
+.invoice-table th,
+.invoice-table td {
+    border: 1px solid #b3006b;
+    padding: 8px 6px;
+    text-align: center;
+}
+
+.invoice-table th {
+    background: #f7e3f0;
+    color: #b3006b;
+    font-weight: bold;
+}
+
+.invoice-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.invoice-table tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+.invoice-totals {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 12px;
+    gap: 4px;
+}
+
+.invoice-totals>div {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+
+.invoice-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #invoicePopup,
+    #invoicePopup * {
+        visibility: visible;
+    }
+
+    #invoicePopup {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: none;
+        box-shadow: none;
+        display: block !important;
+    }
+
+    .invoice-layout {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        max-width: 100vw;
+    }
+
+    .invoice-actions {
+        display: none;
+    }
+}
+
+/* Sales Tracking Table Styles */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 16px;
+    width: 100%;
+    /* Ensure this wrapper takes full width */
+}
+
+/* The #salesTable rule itself is overridden by .styled-sales-table below, which is correct */
+#salesTable {
+    width: 100%;
+    /* Make sure the table takes up 100% of its parent (.table-responsive) */
+    border-collapse: collapse;
+    background: #fff;
+    margin-bottom: 24px;
+    font-size: 1rem;
+    /* table-layout: auto; is good for letting columns size naturally */
+    table-layout: auto;
+}
+
+#salesTable th,
+#salesTable td {
+    border: 1px solid #b3006b;
+    padding: 10px 8px;
+    text-align: center;
+    /* Allow text to wrap if necessary, don't force nowrap globally */
+    white-space: normal;
+    /* Changed from nowrap to normal */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Still useful for very long single words */
+}
+
+/* You might want to remove specific `white-space: normal;` overrides if the global is now normal */
+/* Leaving these for now in case you want specific columns to always wrap even if others could be nowrap */
+/* .styled-sales-table th:nth-child(1), /* Customer Name */
+/* .styled-sales-table td:nth-child(1), */
+/* .styled-sales-table th:nth-child(3), /* Item# */
+/* .styled-sales-table td:nth-child(3) {
+    white-space: normal; /* This is now redundant if global is normal, but harmless */
+/* } */
+
+
+#salesTable th {
+    background: #f7e3f0;
+    color: #b3006b;
+    font-weight: bold;
+}
+
+#salesTable tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+#salesTable tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+#salesTable td {
+    color: #222;
+}
+
+/* Centered, grounded main content area */
+.container.main-content {
+    max-width: 1200px;
+    /* INCREASED THIS FROM 950px TO 1200px */
+    margin: 40px auto;
+    /* This centers the main content area */
+    background: #fff;
+    padding: 32px 24px 32px 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    /* REMOVED align-items: center; -> this was forcing content to center, preventing full width use */
+    /* Instead, we ensure child elements like tables are 100% width */
+}
+
+form#salesForm {
+    width: 100%;
+    max-width: 1150px;
+    /* Increased to match container's new max-width */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.a5-sales-table {
+    /* This class is probably for the invoice/quotation view, not the tracking tables */
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1150px;
+    /* Increased to match container's new max-width */
+    /* Removed table-layout: fixed; from here to allow tables to adjust naturally */
+}
+
+.a5-sales-table th,
+.a5-sales-table td {
+    word-break: break-word;
+}
+
+/* Responsive adjustment for wider screen */
+@media (max-width: 1300px) {
+
+    /* Adjusted breakpoint to account for new max-width */
+    .container.main-content {
+        max-width: 100vw;
+        padding: 0 2vw;
+        /* Use padding for smaller screens within this range */
+    }
+}
+
+@media (max-width: 1100px) {
+
+    .container.main-content,
+    form#salesForm,
+    .a5-sales-table {
+        max-width: 100vw;
+        width: 100vw;
+        padding: 0 2vw;
+    }
+}
+
+@media (max-width: 700px) {
+    .container.main-content {
+        padding: 8px 2px;
+    }
+
+    form#salesForm {
+        padding: 0 2px;
+    }
+
+    .a5-sales-table {
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 700px) {
+    .container.main-content {
+        margin-left: 220px;
+        /* Maintain space for side nav */
+    }
+}
+
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin: 24px 0;
+}
+
+.summary-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid #b3006b;
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.summary-card h3 {
+    margin: 0 0 12px 0;
+    color: #555;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.summary-card p {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #b3006b;
+}
+
+@media (max-width: 1024px) {
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Dashboard Cards Row */
+.dashboard-cards.cards-row {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+}
+
+.dashboard-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(179, 0, 107, 0.10);
+    padding: 32px 40px 28px 40px;
+    min-width: 260px;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.2s;
+    position: relative;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 4px 24px rgba(179, 0, 107, 0.18);
+}
+
+.dashboard-icon {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    color: #b3006b;
+    filter: drop-shadow(0 2px 4px rgba(179, 0, 107, 0.10));
+}
+
+.dashboard-card h2 {
+    font-size: 1.3rem;
+    color: #b3006b;
+    margin-bottom: 8px;
+    margin-top: 0;
+}
+
+.dashboard-value {
+    font-size: 2.6rem;
+    font-weight: bold;
+    color: #222;
+    margin-top: 6px;
+}
+
+@media (max-width: 900px) {
+    .dashboard-cards.cards-row {
+        flex-direction: column;
+        gap: 18px;
+        align-items: center;
+    }
+
+    .dashboard-card {
+        min-width: 180px;
+        max-width: 98vw;
+        padding: 24px 10vw 18px 10vw;
+    }
+}
+
+@media (max-width: 700px) {
+    .dashboard-cards.cards-row {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+        margin-top: 18px;
+    }
+
+    .dashboard-card {
+        min-width: 0;
+        max-width: 100vw;
+        padding: 18px 4vw 14px 4vw;
+        border-radius: 12px;
+    }
+
+    .dashboard-icon {
+        font-size: 2.1rem;
+        margin-bottom: 6px;
+    }
+
+    .dashboard-card h2 {
+        font-size: 1.05rem;
+        margin-bottom: 4px;
+    }
+
+    .dashboard-value {
+        font-size: 1.7rem;
+        margin-top: 2px;
+    }
+}
+
+/**
+ * Enhanced Sales Table Styles
+ * 
+ * SECURITY: Modern, professional styling with improved readability and responsiveness
+ * Features: Zebra striping, hover effects, compact design, responsive layout
+ */
+.styled-sales-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+    /* Smaller, more compact font */
+    table-layout: auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.styled-sales-table th,
+.styled-sales-table td {
+    border: none;
+    border-bottom: 1px solid #e8e8e8;
+    /* Subtle row dividers */
+    padding: 8px 6px;
+    /* Tighter padding for compact look */
+    text-align: center;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+/* Enhanced header styling */
+.styled-sales-table th {
+    background: linear-gradient(135deg, #b3006b, #8a0052);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Zebra striping with subtle colors */
+.styled-sales-table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.styled-sales-table tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+/* Enhanced hover effects */
+.styled-sales-table tbody tr:hover {
+    background: #e3f2fd !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.styled-sales-table td {
+    color: #333;
+    font-weight: 400;
+}
+
+/* Enhanced form input hover and focus effects */
+.search-bar input:focus,
+.filters input:focus,
+.filters select:focus {
+    outline: none;
+    border-color: #b3006b !important;
+    box-shadow: 0 0 0 3px rgba(179, 0, 107, 0.1);
+    transform: translateY(-1px);
+}
+
+.search-bar input:hover,
+.filters input:hover,
+.filters select:hover {
+    border-color: #b3006b;
+    transform: translateY(-1px);
+}
+
+.search-bar button:hover,
+.filters button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .styled-sales-table {
+        font-size: 0.8rem;
+    }
+
+    .styled-sales-table th,
+    .styled-sales-table td {
+        padding: 6px 4px;
+    }
+
+    .styled-sales-table th {
+        font-size: 0.75rem;
+        padding: 8px 4px;
+    }
+
+    .search-bar,
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar>*,
+    .filters>* {
+        margin-bottom: 8px;
+    }
+}
+
+/* Icon-only action buttons for sales tables */
+.styled-sales-table button {
+    background: #b3006b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: background 0.2s;
+    padding: 0;
+}
+
+.styled-sales-table button:hover {
+    background: #8a0052;
+}
+
+.styled-sales-table button span[role='img'] {
+    font-size: 1.3rem;
+    margin: 0;
+    padding: 0;
+}
+
+/* Logout button styles */
+.logout-button {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: 20px;
+    font-weight: 500;
+}
+
+.logout-button:hover {
+    background: #c82333;
+}
+
+/* Authentication status indicator */
+.auth-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #666;
+    margin-left: 20px;
+}
+
+.auth-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #28a745;
+}
+
+/* Toast Notification System */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.toast {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 10px;
+    padding: 16px 20px;
+    min-width: 300px;
+    max-width: 400px;
+    pointer-events: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    border-left: 4px solid #007bff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.success {
+    border-left-color: #28a745;
+}
+
+.toast.error {
+    border-left-color: #dc3545;
+}
+
+.toast.warning {
+    border-left-color: #ffc107;
+}
+
+.toast.info {
+    border-left-color: #17a2b8;
+}
+
+.toast-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.toast.success .toast-icon {
+    color: #28a745;
+}
+
+.toast.error .toast-icon {
+    color: #dc3545;
+}
+
+.toast.warning .toast-icon {
+    color: #ffc107;
+}
+
+.toast.info .toast-icon {
+    color: #17a2b8;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.toast-message {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.toast-close:hover {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+/* Animation for toast entry/exit */
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.toast.entering {
+    animation: toastSlideIn 0.3s ease forwards;
+}
+
+.toast.exiting {
+    animation: toastSlideOut 0.3s ease forwards;
+}

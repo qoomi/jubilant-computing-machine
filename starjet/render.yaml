@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: starjet-app
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: PORT
+        value: 10000
+      - key: ALLOWED_ORIGINS
+        value: https://yourdomain.com
+    autoDeploy: false
+    healthCheckPath: /api/health

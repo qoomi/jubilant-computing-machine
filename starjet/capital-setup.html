@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co;">
+    <title>Capital Setup - Star Jet</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- API Client for server communication -->
+    <script src="config.js"></script>
+    <script src="api-client.js"></script>
+    <script src="auth.js"></script>
+    <script src="user-profile.js"></script>
+    <script src="access-control.js"></script>
+    <style>
+        .setup-container {
+            max-width: 500px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 32px 24px 24px 24px;
+            border: 4px solid #b3006b;
+        }
+
+        .setup-title {
+            color: #b3006b;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 8px 0 24px 0;
+            text-align: center;
+        }
+
+        .setup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-row label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-row input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-row input:focus {
+            border-color: #b3006b;
+            outline: none;
+        }
+
+        .setup-btn {
+            background: #b3006b;
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 12px;
+        }
+
+        .setup-btn:hover {
+            background: #8a0052;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .danger-btn {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .danger-btn:hover {
+            background: #c82333;
+        }
+
+        .info-text {
+            background: #f8f8f8;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .capital-display {
+            background: #f8f8f8;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .capital-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #b3006b;
+        }
+
+        /* Warning Modal Styles */
+        .warning-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .warning-content {
+            background: #fff;
+            padding: 32px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 4px solid #dc3545;
+        }
+
+        .warning-title {
+            color: #dc3545;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .warning-message {
+            background: #fff5f5;
+            border: 2px solid #dc3545;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .warning-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .warning-input:focus {
+            border-color: #dc3545;
+            outline: none;
+        }
+
+        .warning-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .warning-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .warning-btn.cancel {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        .warning-btn.cancel:hover {
+            background: #5a6268;
+        }
+
+        .warning-btn.confirm {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .warning-btn.confirm:hover {
+            background: #c82333;
+        }
+
+        .warning-btn.confirm:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="side-nav">
+        <ul class="nav-menu">
+            <!-- Navigation will be dynamically rendered based on user role -->
+        </ul>
+    </nav>
+    <div class="container main-content">
+        <div class="setup-container">
+            <div class="setup-title">Capital Management</div>
+
+            <!-- Current Capital Display -->
+            <div class="capital-display">
+                <div>Current Capital</div>
+                <div class="capital-amount" id="currentCapital">$0.00</div>
+            </div>
+
+            <div class="info-text">
+                <strong>Important:</strong> Manage your capital settings here. The capital amount is used as the
+                starting point for all financial calculations. Changes here affect all reports and statistics.
+            </div>
+
+            <form id="capitalSetupForm">
+                <div class="form-row">
+                    <label for="originalCapital">Capital Amount</label>
+                    <input type="number" id="originalCapital" name="originalCapital" step="0.01" min="0" required
+                        placeholder="Enter capital amount">
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="danger-btn" id="setCapitalBtn">Set Capital</button>
+                    <button type="button" class="danger-btn" id="removeCapitalBtn">Remove Capital</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Warning Modal for Set Capital -->
+    <div class="warning-modal" id="setCapitalModal">
+        <div class="warning-content">
+            <div class="warning-title">🚨🚨 CRITICAL WARNING 🚨🚨</div>
+            <div class="warning-message">
+                🚨🚨 You are about to SET the capital of this system. This is a critical financial value that affects
+                all calculations. If set incorrectly, your reports may become inaccurate. Only proceed if you fully
+                understand the impact. 🚨🚨
+            </div>
+            <input type="text" class="warning-input" id="setCapitalConfirm" placeholder="Type 'CONFIRM' to proceed">
+            <div class="warning-buttons">
+                <button class="warning-btn cancel" onclick="closeSetCapitalModal()">Cancel</button>
+                <button class="warning-btn confirm" id="setCapitalProceedBtn" disabled
+                    onclick="proceedSetCapital()">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Modal for Remove Capital -->
+    <div class="warning-modal" id="removeCapitalModal">
+        <div class="warning-content">
+            <div class="warning-title">⚠️⚠️ DANGER WARNING ⚠️⚠️</div>
+            <div class="warning-message">
+                ⚠️⚠️ WARNING: You are about to DELETE the capital value from the system. This will break current
+                financial calculations and cause stats to malfunction until a new capital is set. This action is
+                irreversible. ⚠️⚠️
+            </div>
+            <input type="text" class="warning-input" id="removeCapitalConfirm" placeholder="Type 'RESET' to proceed">
+            <div class="warning-buttons">
+                <button class="warning-btn cancel" onclick="closeRemoveCapitalModal()">Cancel</button>
+                <button class="warning-btn confirm" id="removeCapitalProceedBtn" disabled
+                    onclick="proceedRemoveCapital()">Confirm Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Capital Setup Handler for Star Jet Application
+         * 
+         * This module handles capital setup and management with secure validation,
+         * confirmation dialogs, and comprehensive error handling for financial data.
+         * 
+         * SECURITY FEATURES:
+         * - Input sanitization and validation
+         * - Financial data protection
+         * - Confirmation dialogs for critical operations
+         * - Rate limiting on operations
+         * - Secure error handling without information disclosure
+         * 
+         * File: capital-setup.html (embedded script)
+         * Dependencies: supabase.js, auth.js, access-control.js
+         * 
+         * @author Star Jet Development Team
+         * @version 2.0.0
+         * @lastUpdated 2024
+         */
+
+        // Security and validation constants
+        const CAPITAL_SECURITY_CONFIG = {
+            MIN_CAPITAL_AMOUNT: 0,
+            MAX_CAPITAL_AMOUNT: 10000000, // $10M limit
+            RATE_LIMIT_DELAY: 3000, // milliseconds
+            CONFIRMATION_TIMEOUT: 30000 // 30 seconds
+        };
+
+        /**
+         * Sanitize input to prevent XSS and injection attacks
+         * 
+         * @param {string} input - The input string to sanitize
+         * @returns {string} Sanitized input string
+         */
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') {
+                return '';
+            }
+
+            return input
+                .replace(/<[^>]*>/g, '') // Remove HTML tags
+                .replace(/[<>]/g, '') // Remove angle brackets
+                .replace(/javascript:/gi, '') // Remove javascript: protocol
+                .replace(/on\w+=/gi, '') // Remove event handlers
+                .trim();
+        }
+
+        /**
+         * Validate capital amount with security bounds
+         * 
+         * @param {string|number} amount - The amount to validate
+         * @returns {object} Validation result with isValid and sanitizedValue
+         */
+        function validateCapitalAmount(amount) {
+            const sanitizedAmount = sanitizeInput(String(amount));
+            const numericAmount = parseFloat(sanitizedAmount);
+
+            if (isNaN(numericAmount)) {
+                console.warn('🔐 Validation: Invalid capital amount:', amount);
+                return { isValid: false, sanitizedValue: 0 };
+            }
+
+            if (numericAmount < CAPITAL_SECURITY_CONFIG.MIN_CAPITAL_AMOUNT || numericAmount > CAPITAL_SECURITY_CONFIG.MAX_CAPITAL_AMOUNT) {
+                console.warn('🔐 Validation: Capital amount out of bounds:', numericAmount,
+                    `(min: ${CAPITAL_SECURITY_CONFIG.MIN_CAPITAL_AMOUNT}, max: ${CAPITAL_SECURITY_CONFIG.MAX_CAPITAL_AMOUNT.toLocaleString()})`);
+                return { isValid: false, sanitizedValue: numericAmount };
+            }
+
+            return { isValid: true, sanitizedValue: numericAmount };
+        }
+
+        /**
+         * Load existing capital settings with enhanced error handling and security logging
+         * 
+         * @returns {Promise<Object>} Capital settings object
+         * 
+         * SECURITY: Includes comprehensive error handling and audit logging
+         */
+        async function loadCapitalSettings() {
+            const timestamp = new Date().toISOString();
+
+            console.log('🔐 Loading capital settings:', {
+                timestamp: timestamp,
+                file: 'capital-setup.html',
+                function: 'loadCapitalSettings'
+            });
+
+            try {
+                if (!window.apiClient) {
+                    console.warn('🔐 Security: API client not configured', {
+                        timestamp: timestamp,
+                        file: 'capital-setup.html',
+                        function: 'loadCapitalSettings'
+                    });
+                    return { originalCapital: 0 };
+                }
+
+                const result = await window.apiClient.getCapitalSettings();
+
+                if (result.error) {
+                    console.error('🔐 Failed to load capital settings from API:', {
+                        timestamp: timestamp,
+                        file: 'capital-setup.html',
+                        function: 'loadCapitalSettings',
+                        error: result.error
+                    });
+                    return { originalCapital: 0 };
+                }
+
+                const capitalData = { originalCapital: result.capitalSettings ? result.capitalSettings.original_capital : 0 };
+
+                console.log('🔐 Capital settings loaded successfully:', {
+                    timestamp: new Date().toISOString(),
+                    file: 'capital-setup.html',
+                    function: 'loadCapitalSettings',
+                    capitalAmount: capitalData.originalCapital
+                });
+
+                return capitalData;
+            } catch (e) {
+                console.error('🔐 Failed to load capital settings:', {
+                    timestamp: timestamp,
+                    file: 'capital-setup.html',
+                    function: 'loadCapitalSettings',
+                    error: e.message
+                });
+                return { originalCapital: 0 };
+            }
+        }
+
+        /**
+         * Save capital settings with enhanced validation and security logging
+         * 
+         * @param {Object} settings - Capital settings object
+         * @returns {Promise<boolean>} Success status
+         * 
+         * SECURITY: Includes comprehensive validation and audit logging
+         */
+        async function saveCapitalSettings(settings) {
+            const timestamp = new Date().toISOString();
+
+            console.log('🔐 Saving capital settings:', {
+                timestamp: timestamp,
+                file: 'capital-setup.html',
+                function: 'saveCapitalSettings',
+                capitalAmount: settings.originalCapital
+            });
+
+            // Rate limiting check
+            if (window.lastCapitalSaveTime && (Date.now() - window.lastCapitalSaveTime) < CAPITAL_SECURITY_CONFIG.RATE_LIMIT_DELAY) {
+                console.warn('🔐 Security: Capital save rate limited', {
+                    timestamp: timestamp,
+                    file: 'capital-setup.html',
+                    function: 'saveCapitalSettings'
+                });
+                window.showToast('Please wait a moment before saving again.', 'warning', 'Rate Limited');
+                return false;
+            }
+
+            // Validate capital amount
+            const amountValidation = validateCapitalAmount(settings.originalCapital);
+            if (!amountValidation.isValid) {
+                console.warn('🔐 Validation: Invalid capital amount for save', {
+                    timestamp: timestamp,
+                    file: 'capital-setup.html',
+                    function: 'saveCapitalSettings',
+                    amount: settings.originalCapital
+                });
+                window.showToast(`Please enter a valid capital amount between $${CAPITAL_SECURITY_CONFIG.MIN_CAPITAL_AMOUNT} and $${CAPITAL_SECURITY_CONFIG.MAX_CAPITAL_AMOUNT.toLocaleString()}.`, 'error', 'Invalid Amount');
+                return false;
+            }
+
+            try {
+                if (!window.apiClient) {
+                    console.warn('🔐 Security: API client not configured', {
+                        timestamp: timestamp,
+                        file: 'capital-setup.html',
+                        function: 'saveCapitalSettings'
+                    });
+                    return false;
+                }
+
+                const result = await window.apiClient.updateCapitalSettings(amountValidation.sanitizedValue);
+
+                if (result.error) {
+                    console.error('🔐 Failed to save capital settings via API:', {
+                        timestamp: timestamp,
+                        file: 'capital-setup.html',
+                        function: 'saveCapitalSettings',
+                        error: result.error,
+                        capitalAmount: settings.originalCapital
+                    });
+                    window.showToast('Failed to save capital settings. Please try again.', 'error', 'Save Failed');
+                    return false;
+                }
+
+                // Update rate limiting timestamp
+                window.lastCapitalSaveTime = Date.now();
+
+                console.log('🔐 Capital settings saved successfully:', {
+                    timestamp: new Date().toISOString(),
+                    file: 'capital-setup.html',
+                    function: 'saveCapitalSettings',
+                    capitalAmount: amountValidation.sanitizedValue
+                });
+
+                return true;
+            } catch (e) {
+                console.error('🔐 Failed to save capital settings:', {
+                    timestamp: timestamp,
+                    file: 'capital-setup.html',
+                    function: 'saveCapitalSettings',
+                    error: e.message,
+                    capitalAmount: settings.originalCapital
+                });
+                window.showToast('Failed to save capital settings. Please try again.', 'error', 'Save Failed');
+                return false;
+            }
+        }
+
+        // Load existing value if available
+        let existingSettings = { originalCapital: 0 };
+
+        // Update capital display
+        function updateCapitalDisplay() {
+            const originalCapital = existingSettings.originalCapital || 0;
+            document.getElementById('currentCapital').textContent = `$${originalCapital.toFixed(2)}`;
+        }
+
+        // Initialize capital display
+        (async function initCapital() {
+            existingSettings = await loadCapitalSettings();
+            if (existingSettings.originalCapital > 0) {
+                document.getElementById('originalCapital').value = existingSettings.originalCapital;
+            }
+            updateCapitalDisplay();
+        })();
+
+        // Set Capital Button Handler
+        document.getElementById('setCapitalBtn').addEventListener('click', function () {
+            document.getElementById('setCapitalModal').style.display = 'flex';
+            document.getElementById('setCapitalConfirm').value = '';
+            document.getElementById('setCapitalProceedBtn').disabled = true;
+        });
+
+        // Remove Capital Button Handler
+        document.getElementById('removeCapitalBtn').addEventListener('click', function () {
+            document.getElementById('removeCapitalModal').style.display = 'flex';
+            document.getElementById('removeCapitalConfirm').value = '';
+            document.getElementById('removeCapitalProceedBtn').disabled = true;
+        });
+
+        // Set Capital Confirmation Input Handler
+        document.getElementById('setCapitalConfirm').addEventListener('input', function () {
+            const proceedBtn = document.getElementById('setCapitalProceedBtn');
+            proceedBtn.disabled = this.value !== 'CONFIRM';
+        });
+
+        // Remove Capital Confirmation Input Handler
+        document.getElementById('removeCapitalConfirm').addEventListener('input', function () {
+            const proceedBtn = document.getElementById('removeCapitalProceedBtn');
+            proceedBtn.disabled = this.value !== 'RESET';
+        });
+
+        // Close Set Capital Modal
+        function closeSetCapitalModal() {
+            document.getElementById('setCapitalModal').style.display = 'none';
+        }
+
+        // Close Remove Capital Modal
+        function closeRemoveCapitalModal() {
+            document.getElementById('removeCapitalModal').style.display = 'none';
+        }
+
+        /**
+         * Proceed with setting capital with enhanced validation and security
+         * 
+         * SECURITY: Includes comprehensive validation and user confirmation
+         */
+        async function proceedSetCapital() {
+            const timestamp = new Date().toISOString();
+
+            console.log('🔐 Setting capital started:', {
+                timestamp: timestamp,
+                file: 'capital-setup.html',
+                function: 'proceedSetCapital'
+            });
+
+            const rawCapital = document.getElementById('originalCapital').value;
+            const amountValidation = validateCapitalAmount(rawCapital);
+
+            if (!amountValidation.isValid) {
+                console.warn('🔐 Validation: Invalid capital amount for setting', {
+                    timestamp: timestamp,
+                    file: 'capital-setup.html',
+                    function: 'proceedSetCapital',
+                    amount: rawCapital
+                });
+                window.showToast(`Please enter a valid capital amount between $${CAPITAL_SECURITY_CONFIG.MIN_CAPITAL_AMOUNT} and $${CAPITAL_SECURITY_CONFIG.MAX_CAPITAL_AMOUNT.toLocaleString()}.`, 'error', 'Invalid Amount');
+                return;
+            }
+
+            // Save capital settings with validated amount
+            console.log('🔐 Attempting to save capital:', amountValidation.sanitizedValue);
+            const success = await saveCapitalSettings({ originalCapital: amountValidation.sanitizedValue });
+            console.log('🔐 Save result:', success);
+
+            if (success) {
+                console.log('🔐 Capital set successfully:', {
+                    timestamp: new Date().toISOString(),
+                    file: 'capital-setup.html',
+                    function: 'proceedSetCapital',
+                    capitalAmount: amountValidation.sanitizedValue
+                });
+
+                window.showToast('Capital has been set successfully!', 'success', 'Capital Set');
+                closeSetCapitalModal();
+                window.location.href = 'index.html';
+            } else {
+                console.error('🔐 Failed to save capital settings');
+                window.showToast('Failed to save capital settings. Please try again.', 'error', 'Save Failed');
+            }
+        }
+
+        /**
+         * Proceed with removing capital with enhanced security logging
+         * 
+         * SECURITY: Includes comprehensive logging for critical operations
+         */
+        async function proceedRemoveCapital() {
+            const timestamp = new Date().toISOString();
+
+            console.log('🔐 Removing capital started:', {
+                timestamp: timestamp,
+                file: 'capital-setup.html',
+                function: 'proceedRemoveCapital'
+            });
+
+            // Remove capital settings (set to 0)
+            const success = await saveCapitalSettings({ originalCapital: 0 });
+
+            if (success) {
+                console.log('🔐 Capital removed successfully:', {
+                    timestamp: new Date().toISOString(),
+                    file: 'capital-setup.html',
+                    function: 'proceedRemoveCapital'
+                });
+
+                window.showToast('Capital has been removed from the system. Please set a new capital value.', 'success', 'Capital Removed');
+                closeRemoveCapitalModal();
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('setCapitalModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeSetCapitalModal();
+            }
+        });
+
+        document.getElementById('removeCapitalModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeRemoveCapitalModal();
+            }
+        });
+
+        // Initialize dynamic navigation rendering
+        document.addEventListener('DOMContentLoaded', function () {
+            // Listen for access control ready event
+            document.addEventListener('accessControlReady', function (event) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement && event.detail.accessControl) {
+                    event.detail.accessControl.renderNavigation(navElement);
+                }
+            });
+
+            // Fallback: if access control is already ready, render immediately
+            if (window.accessControl && window.accessControl.getCurrentRole()) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement) {
+                    window.accessControl.renderNavigation(navElement);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

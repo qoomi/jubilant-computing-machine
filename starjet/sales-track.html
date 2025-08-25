@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co;">
+    <title>Sales Tracking - Star Jet</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- API Client for server communication -->
+    <script src="config.js"></script>
+    <script src="api-client.js"></script>
+    <script src="auth.js"></script>
+    <script src="user-profile.js"></script>
+    <script src="access-control.js"></script>
+</head>
+
+<body>
+    <!-- Side Navigation -->
+    <nav class="side-nav">
+        <ul class="nav-menu">
+            <!-- Navigation will be dynamically rendered based on user role -->
+        </ul>
+    </nav>
+    <!-- Main Content -->
+    <div class="container main-content">
+        <h1>Sales Tracking</h1>
+
+        <!-- Summary Cards for Sales Tracking -->
+        <div class="summary-cards" style="margin-bottom: 25px;">
+            <div class="summary-card">
+                <h3>Total Pending Sales</h3>
+                <p id="total-pending-sales">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>Total Completed Sales (This Month)</h3>
+                <p id="monthly-completed-sales">$0.00</p>
+            </div>
+            <div class="summary-card">
+                <h3>Total Completed Sales (Today)</h3>
+                <p id="daily-completed-sales">$0.00</p>
+            </div>
+        </div>
+        <!-- Enhanced Search Bar -->
+        <div class="search-bar"
+            style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px; background: #f8f9fa; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <label for="customerSearch"
+                style="font-weight: 600; color: #b3006b; font-size: 0.9rem; min-width: 140px;">Search by Customer
+                Name:</label>
+            <input type="text" id="customerSearch" placeholder="Enter customer name..."
+                style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; width: 220px; transition: all 0.2s ease; background: #fff;">
+            <button id="clearSearchBtn" type="button"
+                style="background: #fff; color: #b3006b; border: 1px solid #b3006b; padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s ease; cursor: pointer;">Clear</button>
+        </div>
+
+        <!-- Enhanced Filter Controls -->
+        <div class="filters"
+            style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; background: #f8f9fa; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="startDate"
+                    style="font-weight: 600; color: #b3006b; font-size: 0.9rem; min-width: 80px;">Start Date:</label>
+                <input type="date" id="startDate"
+                    style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; transition: all 0.2s ease; background: #fff;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="endDate" style="font-weight: 600; color: #b3006b; font-size: 0.9rem; min-width: 80px;">End
+                    Date:</label>
+                <input type="date" id="endDate"
+                    style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; transition: all 0.2s ease; background: #fff;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label style="font-weight: 600; color: #b3006b; font-size: 0.9rem; min-width: 60px;">Status:</label>
+                <button id="statusToggleBtn" type="button"
+                    style="background: #b3006b; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s ease; cursor: pointer; min-width: 120px; box-shadow: 0 2px 4px rgba(179,0,107,0.2);">Pending</button>
+            </div>
+            <button id="filterBtn" type="button"
+                style="background: #b3006b; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s ease; cursor: pointer; box-shadow: 0 2px 4px rgba(179,0,107,0.2);">Filter</button>
+        </div>
+        <!-- Export Button -->
+        <div
+            style="margin-bottom: 12px; text-align: right; display: flex; justify-content: space-between; align-items: center;">
+            <div id="deleteAllContainer" style="display: none;">
+                <!-- Admin-only delete all button (hidden by default) -->
+            </div>
+            <button id="exportBtn" type="button">Export CSV</button>
+        </div>
+
+        <!-- Enhanced Delete Modal (hidden by default) -->
+        <div id="deleteModal"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; backdrop-filter: blur(4px);">
+            <div
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 32px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); max-width: 500px; width: 90%; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 16px;">⚠️</div>
+                <h3 style="color: #dc3545; margin-bottom: 16px; font-size: 1.5rem;">Delete Confirmation</h3>
+                <p id="deleteModalMessage" style="margin-bottom: 24px; color: #666; line-height: 1.5;"></p>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button id="confirmDeleteBtn" type="button"
+                        style="background: #dc3545; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Confirm
+                        Delete</button>
+                    <button id="cancelDeleteBtn" type="button"
+                        style="background: #6c757d; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <!-- Pending Sales Section -->
+        <div id="pendingSalesSection" style="margin-bottom: 32px;">
+            <h2 style="color:#b3006b;">🕒 Pending Sales</h2>
+            <div class="table-responsive">
+                <table id="pendingSalesTable" class="styled-sales-table">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Customer Phone</th>
+                            <th>Item#</th>
+                            <th>Width</th>
+                            <th>Length</th>
+                            <th>Space</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Discount</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JS will populate pending sales rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Sales Tracking Section -->
+        <div id="salesTrackingSection">
+            <h2 style="color:#b3006b;">📜 Sales Tracking</h2>
+            <div class="table-responsive">
+                <table id="salesTable" class="styled-sales-table">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Customer Phone</th>
+                            <th>Item#</th>
+                            <th>Width</th>
+                            <th>Length</th>
+                            <th>Space</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Discount</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JS will populate sales rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="toast-notifications.js"></script>
+    <script src="sales-track.js"></script>
+    <script>
+        // Initialize dynamic navigation rendering
+        document.addEventListener('DOMContentLoaded', function () {
+            // Listen for access control ready event
+            document.addEventListener('accessControlReady', function (event) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement && event.detail.accessControl) {
+                    event.detail.accessControl.renderNavigation(navElement);
+                }
+            });
+
+            // Fallback: if access control is already ready, render immediately
+            if (window.accessControl && window.accessControl.getCurrentRole()) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement) {
+                    window.accessControl.renderNavigation(navElement);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

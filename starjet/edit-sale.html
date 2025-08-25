@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co;">
+    <title>Edit Sale - Star Jet</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- API Client for server communication -->
+    <script src="config.js"></script>
+    <script src="api-client.js"></script>
+    <script src="auth.js"></script>
+    <script src="user-profile.js"></script>
+    <script src="access-control.js"></script>
+    <script src="toast-notifications.js"></script>
+    <style>
+        .a5-sales-container {
+            max-width: 900px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 32px 24px 24px 24px;
+            border: 4px solid #b3006b;
+        }
+
+        .a5-sales-title {
+            color: #b3006b;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 8px 0 24px 0;
+            text-align: center;
+        }
+
+        .a5-add-item-btn {
+            background: #b3006b;
+            color: #fff;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .a5-remove-item-btn {
+            background: #fff;
+            color: #b3006b;
+            border: 1.5px solid #b3006b;
+            border-radius: 4px;
+            font-size: 1rem;
+            padding: 2px 10px;
+            cursor: pointer;
+        }
+
+        .a5-remove-item-btn:hover {
+            background: #b3006b;
+            color: #fff;
+        }
+
+        @media (max-width: 700px) {
+            .a5-sales-container {
+                padding: 8px 2px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="side-nav">
+        <ul class="nav-menu">
+            <!-- Navigation will be dynamically rendered based on user role -->
+        </ul>
+    </nav>
+    <div class="container main-content">
+        <div class="a5-sales-container">
+            <div class="a5-sales-title">Edit Sale</div>
+            <form id="editSaleForm">
+                <div style="display: flex; gap: 24px; margin-bottom: 18px;">
+                    <div class="form-row">
+                        <label for="editCustomerName">Customer Name</label>
+                        <input type="text" id="editCustomerName" name="customerName" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="editCustomerPhone">Customer Phone</label>
+                        <input type="text" id="editCustomerPhone" name="customerPhone" required>
+                    </div>
+                </div>
+                <table class="a5-sales-table" id="editItemsTable">
+                    <thead>
+                        <tr>
+                            <th>Item#</th>
+                            <th>Width</th>
+                            <th>Length</th>
+                            <th>Space</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="editItemsTbody">
+                        <!-- JS will populate rows here -->
+                    </tbody>
+                </table>
+                <button type="button" class="a5-add-item-btn" id="addEditItemBtn" style="margin: 12px 0 0 0;">+ Add
+                    Item</button>
+                <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+                    <table>
+                        <tr>
+                            <td><label for="edit-supTotal">Sup Totel:</label></td>
+                            <td><input type="number" id="edit-supTotal" name="supTotal" readonly></td>
+                        </tr>
+                        <tr>
+                            <td><label for="edit-discount">Discount%:</label></td>
+                            <td><input type="number" id="edit-discount" name="discount" min="0" max="100" value="0">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="edit-total">Totel:</label></td>
+                            <td><input type="number" id="edit-total" name="total" readonly></td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px;">
+                    <button type="button" onclick="window.location.href='sales-track.html'">Cancel</button>
+                    <button type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Get sale id from query string
+        function getSaleId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Load sale data from API
+        async function loadSaleFromAPI(saleId) {
+            try {
+                if (!window.apiClient) {
+                    alert('API client not configured. Please check your configuration.');
+                    return null;
+                }
+
+                const result = await window.apiClient.getSale(saleId);
+
+                if (result.error || !result.sale) {
+                    console.error('Error fetching sale from API:', result.error);
+                    alert('Failed to load sale from database.');
+                    return null;
+                }
+
+                return result.sale;
+            } catch (e) {
+                console.error('Failed to load sale from API:', e);
+                alert('Failed to load sale from database.');
+                return null;
+            }
+        }
+
+        // Initialize sale data
+        let sale = null;
+        let saleId = getSaleId();
+
+        (async function initEditSale() {
+            if (!saleId) {
+                alert('No sale ID provided.');
+                window.location.href = 'sales-track.html';
+                return;
+            }
+
+            sale = await loadSaleFromAPI(saleId);
+            if (!sale) {
+                alert('Sale not found.');
+                window.location.href = 'sales-track.html';
+                return;
+            }
+
+            // Initialize the form with sale data
+            initializeEditForm();
+        })();
+
+        // Initialize the edit form with sale data
+        function initializeEditForm() {
+            // Populate item rows
+            renderEditRows();
+
+            // Add item row logic
+            document.getElementById('addEditItemBtn').onclick = function () {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td><input type="text" name="item[]" style="width:90px;" placeholder="Item" required></td>
+                <td><input type="number" name="width[]" step="0.01" min="0" style="width:70px;"></td>
+                <td><input type="number" name="length[]" step="0.01" min="0" style="width:70px;"></td>
+                <td><input type="text" name="space[]" style="width:70px;"></td>
+                <td><input type="number" name="quantity[]" min="0" style="width:70px;" required></td>
+                <td><input type="number" name="unitPrice[]" step="0.01" min="0" style="width:90px;" required></td>
+                <td><input type="number" name="itemTotal[]" readonly style="width:90px;"></td>
+                <td><button type="button" class="a5-remove-item-btn">Remove</button></td>
+            `;
+                document.getElementById('editItemsTbody').appendChild(tr);
+                tr.querySelector('.a5-remove-item-btn').onclick = function () {
+                    tr.remove();
+                    updateAllEditTotals();
+                };
+            };
+
+            // Set up event listeners
+            document.getElementById('editItemsTbody').addEventListener('input', function (e) {
+                if (["width[]", "length[]", "quantity[]", "unitPrice[]"].includes(e.target.name)) {
+                    updateAllEditTotals();
+                }
+            });
+            document.getElementById('edit-discount').addEventListener('input', updateAllEditTotals);
+
+            // Populate form fields
+            document.getElementById('editCustomerName').value = sale.customerName || sale.customername || '';
+            document.getElementById('editCustomerPhone').value = sale.customerPhone || sale.customerphone || '';
+            document.getElementById('edit-discount').value = sale.discount || 0;
+
+            // Initialize totals
+            updateAllEditTotals();
+
+            // Set up form submission
+            setupFormSubmission();
+        }
+
+        // Sanitize HTML to prevent XSS attacks
+        function sanitizeHTML(str) {
+            if (typeof str !== 'string') return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Populate item rows
+        function renderEditRows() {
+            const tbody = document.getElementById('editItemsTbody');
+            tbody.innerHTML = '';
+            (sale.items || []).forEach((item, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td><input type="text" name="item[]" style="width:90px;" placeholder="Item" required value="${sanitizeHTML(item.item || '')}"></td>
+                <td><input type="number" name="width[]" step="0.01" min="0" style="width:70px;" value="${sanitizeHTML(item.width || '')}"></td>
+                <td><input type="number" name="length[]" step="0.01" min="0" style="width:70px;" value="${sanitizeHTML(item.length || '')}"></td>
+                <td><input type="text" name="space[]" style="width:70px;" value="${sanitizeHTML(item.space || '')}"></td>
+                <td><input type="number" name="quantity[]" min="0" style="width:70px;" value="${sanitizeHTML(item.quantity || '')}" required></td>
+                <td><input type="number" name="unitPrice[]" step="0.01" min="0" style="width:90px;" value="${sanitizeHTML(item.unitPrice || '')}" required></td>
+                <td><input type="number" name="itemTotal[]" readonly style="width:90px;" value="${sanitizeHTML(item.itemTotal || '')}"></td>
+                <td><button type="button" class="a5-remove-item-btn">Remove</button></td>
+            `;
+                tbody.appendChild(tr);
+                tr.querySelector('.a5-remove-item-btn').onclick = function () {
+                    tr.remove();
+                    updateAllEditTotals();
+                };
+            });
+        }
+        // Calculation logic
+        function calculateRowTotal(width, length, quantity, unitPrice) {
+            width = parseFloat(width);
+            length = parseFloat(length);
+            quantity = parseFloat(quantity);
+            unitPrice = parseFloat(unitPrice);
+
+            // Check if width and length are both provided
+            const hasWidth = !isNaN(width) && width > 0;
+            const hasLength = !isNaN(length) && length > 0;
+            const hasQuantity = !isNaN(quantity) && quantity > 0;
+            const hasUnitPrice = !isNaN(unitPrice) && unitPrice > 0;
+
+            // If both width and length are provided, calculate area × quantity × unit price
+            if (hasWidth && hasLength && hasQuantity && hasUnitPrice) {
+                return width * length * quantity * unitPrice;
+            }
+
+            // If neither width nor length is provided, calculate quantity × unit price
+            if (!hasWidth && !hasLength && hasQuantity && hasUnitPrice) {
+                return quantity * unitPrice;
+            }
+
+            // If only one of width or length is provided, return 0 (will be caught by validation)
+            return 0;
+        }
+        function updateAllEditTotals() {
+            const rows = document.querySelectorAll('#editItemsTbody tr');
+            let supTotal = 0;
+            rows.forEach(row => {
+                const width = row.querySelector('input[name="width[]"]').value;
+                const length = row.querySelector('input[name="length[]"]').value;
+                const quantity = row.querySelector('input[name="quantity[]"]').value;
+                const unitPrice = row.querySelector('input[name="unitPrice[]"]').value;
+                const total = calculateRowTotal(width, length, quantity, unitPrice);
+                row.querySelector('input[name="itemTotal[]"]').value = total > 0 ? total.toFixed(2) : '';
+                supTotal += total;
+            });
+            document.getElementById('edit-supTotal').value = supTotal.toFixed(2);
+            // Apply discount
+            const discount = parseFloat(document.getElementById('edit-discount').value) || 0;
+            let finalTotal = supTotal;
+            if (discount > 0) {
+                finalTotal = supTotal * (1 - discount / 100);
+            }
+            document.getElementById('edit-total').value = finalTotal.toFixed(2);
+        }
+
+        // Set up form submission
+        function setupFormSubmission() {
+            document.getElementById('editSaleForm').onsubmit = async function (e) {
+                e.preventDefault();
+                const items = [];
+                const rows = document.querySelectorAll('#editItemsTbody tr');
+                let hasError = false;
+                rows.forEach(row => {
+                    let itemEl = row.querySelector('input[name="item[]"]');
+                    const item = itemEl ? itemEl.value : '';
+                    const width = row.querySelector('input[name="width[]"]').value;
+                    const length = row.querySelector('input[name="length[]"]').value;
+                    const space = row.querySelector('input[name="space[]"]').value;
+                    const quantity = row.querySelector('input[name="quantity[]"]').value;
+                    const unitPrice = row.querySelector('input[name="unitPrice[]"]').value;
+                    const itemTotal = row.querySelector('input[name="itemTotal[]"]').value;
+
+                    // New validation logic for optional width/length
+                    const hasWidth = width && parseFloat(width) > 0;
+                    const hasLength = length && parseFloat(length) > 0;
+                    const hasQuantity = quantity && parseFloat(quantity) > 0;
+                    const hasUnitPrice = unitPrice && parseFloat(unitPrice) > 0;
+
+                    // Check if only one dimension is provided (error case)
+                    if ((hasWidth && !hasLength) || (!hasWidth && hasLength)) {
+                        hasError = true;
+                    }
+
+                    // Check that quantity and unit price are always required
+                    if (!hasQuantity || !hasUnitPrice) {
+                        hasError = true;
+                    }
+
+                    if (item || quantity) {
+                        items.push({ item, width, length, space, quantity, unitPrice, itemTotal });
+                    }
+                });
+                if (items.length === 0) {
+                    window.showToast('Please iskahubi:\n• hadaad qorto Width, waa inaad racisaa Length\n• hadaad qorto Length, waa inaad qorto Width\n• hadii kalena banaan kaga tag oo Quantity iyo Unit Price uun qor\n• zero wax kabadan qor si iskugu dhufto', 'warning', 'Validation Error');
+                    return;
+                }
+                if (hasError) {
+                    window.showToast('Please iskahubi:\n• hadaad qorto Width, waa inaad racisaa Length\n• hadaad qorto Length, waa inaad qorto Width\n• hadii kalena banaan kaga tag oo Quantity iyo Unit Price uun qor\n• zero wax kabadan qor si iskugu dhufto', 'warning', 'Validation Error');
+                    return;
+                }
+
+                // Update sale object
+                sale.items = items;
+                sale.customerName = document.getElementById('editCustomerName').value;
+                sale.customerPhone = document.getElementById('editCustomerPhone').value;
+                sale.discount = parseFloat(document.getElementById('edit-discount').value) || 0;
+                sale.supTotal = parseFloat(document.getElementById('edit-supTotal').value) || 0;
+                sale.total = parseFloat(document.getElementById('edit-total').value) || 0;
+
+                // Save to API
+                const success = await saveSaleToAPI(sale);
+                if (success) {
+                    window.location.href = 'sales-track.html';
+                }
+            };
+        }
+
+        // Save sale to API
+        async function saveSaleToAPI(sale) {
+            try {
+                if (!window.apiClient) {
+                    window.showToast('API client not configured. Please check your configuration.', 'error', 'Configuration Error');
+                    return false;
+                }
+
+                // Use lowercase column names to match database schema
+                const saleData = {
+                    customername: sale.customerName,
+                    customerphone: sale.customerPhone,
+                    items: sale.items,
+                    discount: sale.discount,
+                    suptotal: sale.supTotal,
+                    total: sale.total
+                };
+
+                const result = await window.apiClient.updateSale(sale.id, saleData);
+
+                if (result.error) {
+                    console.error('Error updating sale via API:', result.error);
+                    window.showToast('Failed to update sale. Please try again.', 'error', 'Update Failed');
+                    return false;
+                }
+
+                window.showToast('Sale updated successfully!', 'success', 'Success');
+                return true;
+            } catch (e) {
+                console.error('Failed to update sale via API:', e);
+                window.showToast('Failed to update sale. Please try again.', 'error', 'Update Failed');
+                return false;
+            }
+        }
+
+        // Initialize dynamic navigation rendering
+        document.addEventListener('DOMContentLoaded', function () {
+            // Listen for access control ready event
+            document.addEventListener('accessControlReady', function (event) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement && event.detail.accessControl) {
+                    event.detail.accessControl.renderNavigation(navElement);
+                }
+            });
+
+            // Fallback: if access control is already ready, render immediately
+            if (window.accessControl && window.accessControl.getCurrentRole()) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement) {
+                    window.accessControl.renderNavigation(navElement);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

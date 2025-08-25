@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co;">
+    <title>Dashboard - Star Jet</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Configuration and API Client for secure server communication -->
+    <script src="config.js"></script>
+    <script src="api-client.js"></script>
+    <script src="auth.js"></script>
+    <script src="user-profile.js"></script>
+    <script src="access-control.js"></script>
+</head>
+
+<body>
+    <!-- Side Navigation -->
+    <nav class="side-nav">
+        <ul class="nav-menu">
+            <!-- Navigation will be dynamically rendered based on user role -->
+        </ul>
+    </nav>
+    <!-- Main Content -->
+    <div class="container main-content">
+        <h1>Sales Dashboard</h1>
+        <!-- Dashboard Cards -->
+        <div class="dashboard-cards cards-row">
+            <div class="dashboard-card" id="pendingSalesCard" tabindex="0" style="cursor:pointer;">
+                <div class="dashboard-icon" aria-label="Pending Sales" title="Pending Sales">⏳</div>
+                <h2>All Pending Sales</h2>
+                <div class="dashboard-value" id="pendingSalesValue">0</div>
+            </div>
+            <div class="dashboard-card" id="completedTodayCard" tabindex="0" style="cursor:pointer;">
+                <div class="dashboard-icon" aria-label="Completed Today" title="Completed Today">✔️</div>
+                <h2>Completed Today</h2>
+                <div class="dashboard-value" id="completedTodayValue">0</div>
+            </div>
+            <div class="dashboard-card" id="currentCapitalCard" tabindex="0" style="cursor:pointer;">
+                <div class="dashboard-icon" aria-label="Current Capital" title="Current Capital">💰</div>
+                <h2>Current Capital</h2>
+                <div class="dashboard-value" id="currentCapitalValue">$0.00</div>
+            </div>
+            <div class="dashboard-card" id="capitalSetupCard" tabindex="0" style="cursor:pointer;">
+                <div class="dashboard-icon" aria-label="Capital Management" title="Capital Management">⚙️</div>
+                <h2>Capital Management</h2>
+                <div class="dashboard-value">Manage</div>
+            </div>
+        </div>
+
+        <!-- Manual Refresh Button -->
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="refreshDashboardBtn"
+                style="background: #b3006b; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s;"
+                title="Refresh dashboard data">
+                🔄 Refresh Dashboard
+            </button>
+            <div id="lastUpdated" style="margin-top: 8px; font-size: 0.9rem; color: #666;">
+                Last updated: <span id="lastUpdatedTime">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <script src="toast-notifications.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        // Make dashboard cards clickable
+        // Pending Sales: filter for pending sales in last 24 hours
+        // Completed Today: filter for completed sales today
+
+        document.getElementById('pendingSalesCard').onclick = function () {
+            // Go to sales tracking with filter for all pending sales
+            window.location.href = 'sales-track.html?status=Pending';
+        };
+        document.getElementById('completedTodayCard').onclick = function () {
+            // Go to sales tracking with filter for completed sales today
+            const today = new Date().toISOString().slice(0, 10);
+            window.location.href = `sales-track.html?status=Completed&startDate=${today}&endDate=${today}`;
+        };
+
+        document.getElementById('currentCapitalCard').onclick = function () {
+            // Go to statistics page
+            window.location.href = 'statistics.html';
+        };
+
+        document.getElementById('capitalSetupCard').onclick = function () {
+            // Go to capital management page
+            window.location.href = 'capital-setup.html';
+        };
+
+        // Manual refresh button handler
+        document.getElementById('refreshDashboardBtn').onclick = async function () {
+            this.disabled = true;
+            this.textContent = '🔄 Refreshing...';
+
+            try {
+                await window.refreshDashboard();
+                document.getElementById('lastUpdatedTime').textContent = new Date().toLocaleTimeString();
+            } catch (error) {
+                console.error('Manual refresh failed:', error);
+            } finally {
+                this.disabled = false;
+                this.textContent = '🔄 Refresh Dashboard';
+            }
+        };
+
+        // Initialize dynamic navigation rendering
+        document.addEventListener('DOMContentLoaded', function () {
+            // Listen for access control ready event
+            document.addEventListener('accessControlReady', function (event) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement && event.detail.accessControl) {
+                    event.detail.accessControl.renderNavigation(navElement);
+                }
+            });
+
+            // Fallback: if access control is already ready, render immediately
+            if (window.accessControl && window.accessControl.getCurrentRole()) {
+                const navElement = document.querySelector('.side-nav');
+                if (navElement) {
+                    window.accessControl.renderNavigation(navElement);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
